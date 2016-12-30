@@ -1,19 +1,19 @@
 /**
  * Created by sd on 30.12.16.
  */
-class StateMachine2<Alphabet> internal constructor() {
+class StateMachina<Alphabet> internal constructor() {
     fun getInputStub(): Alphabet = null as Alphabet
 }
 
-fun <T> stateMachine2(block: StateMachine2<T>.() -> Unit): StateMachine2<T> {
-    return StateMachine2<T>()
+fun <T> stateMachina(block: StateMachina<T>.() -> Unit): StateMachina<T> {
+    return StateMachina<T>()
 }
 
 class ProblemWithoutSuspend<Alphabet>(){
 
     fun getInputStub(): Alphabet = null as Alphabet
 
-    fun createStateMachine(): StateMachine2<Alphabet> = stateMachine2 {
+    fun createStateMachine(): StateMachina<Alphabet> = stateMachina {
         val letter = getInputStub()
         if (letter is Any)
             println("yes")
