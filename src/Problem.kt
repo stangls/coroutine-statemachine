@@ -1,7 +1,6 @@
 /**
  * Created by sd on 30.12.16.
  */
-@kotlin.coroutines.RestrictsSuspension
 class StateMachine<Alphabet> internal constructor() {
     fun getInputStub(): Alphabet = null as Alphabet
 }
@@ -11,6 +10,8 @@ fun <T> stateMachine(block: suspend StateMachine<T>.() -> Unit): StateMachine<T>
 }
 
 class Problem<Alphabet>(){
+
+    fun getInputStub(): Alphabet = null as Alphabet
 
     fun createStateMachine(): StateMachine<Alphabet> = stateMachine {
         val letter = getInputStub()
