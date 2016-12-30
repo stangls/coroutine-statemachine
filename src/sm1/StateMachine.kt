@@ -14,15 +14,17 @@ import kotlin.coroutines.suspendCoroutine
  * Created by sd on 29.12.16.
  */
 @RestrictsSuspension
-class StateMachine<T> internal constructor() {
+class StateMachine<Alphabet> internal constructor() {
 
-    protected val queue = LinkedBlockingQueue<T>()
+    protected val queue = LinkedBlockingQueue<Alphabet>()
     protected var inputClosed = false
     protected var inFinalState = false
 
+    fun getInputStub(): Alphabet = null as Alphabet
+
     @Throws(InputClosedException::class)
-    suspend fun getInput(): T {
-        return suspendCoroutine<T> { c: Continuation<T> ->
+    suspend fun getInput(): Alphabet {
+        return suspendCoroutine<Alphabet> { c: Continuation<Alphabet> ->
             fun checkException() : Boolean {
                 synchronized(this) {
                     val exc = exception
@@ -88,7 +90,7 @@ class StateMachine<T> internal constructor() {
 
     /** could potentially block, but should not **/
     @Throws(InputClosedException::class)
-    fun input(i:T) {
+    fun input(i:Alphabet) {
         if (exception!=null)
             throw Exception(exception)
         if (inputClosed){

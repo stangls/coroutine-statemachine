@@ -8,19 +8,19 @@ package sm1
 annotation class StateMachineDSL
 
 @StateMachineDSL
-open class State<T> internal constructor(
+open class State<Alphabet> internal constructor(
     var label: String? = null,
-    protected val body: State<T>.() -> Unit
+    protected val body: State<Alphabet>.() -> Unit
 ) {
     var final: Boolean = false
     internal fun visit() {
         this.body()
     }
-    internal val simpleTransitions = mutableMapOf<T, State<T>>()
-    internal val classBasedTransitions : MutableMap<Class<out T>, State<T>> = mutableMapOf()
+    internal val simpleTransitions = mutableMapOf<Alphabet, State<Alphabet>>()
+    internal val classBasedTransitions : MutableMap<Class<out Alphabet>, State<Alphabet>> = mutableMapOf()
 
-    internal var errorCallback: ((T) -> Unit)? = null
-    fun onError(function : (T) -> Unit) {
+    internal var errorCallback: ((Alphabet) -> Unit)? = null
+    fun onError(function : (Alphabet) -> Unit) {
         errorCallback = function
     }/*
     @Deprecated("loops should be defined outside of states")
@@ -42,7 +42,7 @@ class Transition<T> internal constructor(
     fun via(letter: T, nextState: State<T>.() -> Unit ) = builder.transition(this.nextState, letter, nextState)*/
 }*/
 
-internal class FakeInitialState<T> : State<T>( "Initial State", {} ) {
+internal class FakeInitialState<Alphabet> : State<Alphabet>( "Initial State", {} ) {
     var used = false
 }
 
@@ -106,7 +106,7 @@ class StateMachineBuilder<Alphabet> internal constructor(val block: StateMachine
         var state: State<Alphabet> = initialState
         state.visit()
         while (!state.final || !state.noTransitions){
-            val letter = null as Alphabet //getInput()
+            val letter = getInputStub()
             val nextState : State<Alphabet>? =
                 state.simpleTransitions[letter] ?:
                 if (letter is Object)
