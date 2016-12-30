@@ -109,10 +109,10 @@ class StateMachineBuilder<Alphabet> internal constructor(val block: StateMachine
             val letter = getInput()
             unfinal()
             val nextState : State<Alphabet>? =
-                state.simpleTransitions[letter] /*?:
+                state.simpleTransitions[letter] ?:
                 if (letter is Object)
                     state.classBasedTransitions[letter.javaClass as Class<out Alphabet>]
-                else null*/
+                else null
             if (nextState!=null){
                 state = nextState
                 state.visit()
