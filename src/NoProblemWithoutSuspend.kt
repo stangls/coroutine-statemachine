@@ -9,7 +9,7 @@ fun <T> stateMachina(block: StateMachina<T>.() -> Unit): StateMachina<T> {
     return StateMachina<T>()
 }
 
-class ProblemWithoutSuspend<Alphabet>(){
+class NoProblemWithoutSuspend<Alphabet>(){
 
     fun getInputStub(): Alphabet = null as Alphabet
 
