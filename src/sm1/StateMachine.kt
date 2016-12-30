@@ -45,7 +45,7 @@ class StateMachine<T> internal constructor() {
                     if (checkException()) {
                         if (taken!=null) {
                             c.resume(taken)
-                            notifIfFinished()
+                            notifyIfFinished()
                         }else{
                             if (inputClosed){
                                 throw InputClosedException()
@@ -60,23 +60,26 @@ class StateMachine<T> internal constructor() {
     var exception: Throwable? = null
         private set
 
-    internal fun final( exc: Throwable? = null ) {
+    fun final() {
         synchronized(this){
-            if (exc==null) {
-                inFinalState = true
-            }else {
-                exception = exc
-            }
-            notifIfFinished()
+            inFinalState = true
+            notifyIfFinished()
         }
     }
-    internal fun unfinal() {
+    fun unfinal() {
         synchronized(this) {
             inFinalState = false
         }
     }
 
-    fun notifIfFinished() {
+    internal fun exception( exc: Throwable ) {
+        synchronized(this){
+            exception = exc
+            notifyIfFinished()
+        }
+    }
+
+    fun notifyIfFinished() {
         synchronized(this) {
             if (hasFinished())
                 (this as Object).notifyAll()
@@ -102,8 +105,10 @@ class StateMachine<T> internal constructor() {
     }
 
     fun endInput() {
-        inputClosed = true
-        notifIfFinished()
+        synchronized(this) {
+            inputClosed = true
+            notifyIfFinished()
+        }
     }
 
     /**
@@ -151,7 +156,7 @@ fun <T> stateMachine(block: suspend StateMachine<T>.() -> Unit): StateMachine<T>
                 if (exception is InputClosedException) {
                     println("Input was closed in non-final state!")
                 } else {
-                    stateMachine.final(exception)
+                    stateMachine.exception(exception)
                 }
             }
         })
